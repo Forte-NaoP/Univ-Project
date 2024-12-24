@@ -11,7 +11,7 @@
 
 ### 1. 운동량 보존법칙
 
-두 물체의 질량을 각각 $ m_1 $, $ m_2 $라고 하고, 충돌 전 속도를 $ v_1 $, $ v_2 $, 충돌 후 속도를 $ V_1 $, $ V_2 $라고 할 때, 운동량 보존법칙은 다음과 같이 표현된다:
+두 물체의 질량을 각각 $m_1$, $m_2$라고 하고, 충돌 전 속도를 $v_1$, $v_2$, 충돌 후 속도를 $V_1$, $V_2$라고 할 때, 운동량 보존법칙은 다음과 같이 표현된다:
 
 $$
 (1) \quad m_1 v_1 + m_2 v_2 = m_1 V_1 + m_2 V_2  
@@ -73,7 +73,7 @@ $$
 V_1 = \frac{(m_1 - m_2) v_1 + 2 m_2 v_2}{m_1 + m_2}
 $$
 
-마찬가지로, $ V_2 $는 다음과 같다:
+마찬가지로, $V_2$는 다음과 같다:
 
 $$
 V_2 = \frac{(m_2 - m_1) v_2 + 2 m_1 v_1}{m_1 + m_2}
@@ -83,25 +83,34 @@ $$
 
 ## 물체의 크기를 포함한 속도 계산
 
-물체의 크기가 존재하면 위에서 구한 값에 추가적인 계산이 필요하다.
+물체의 크기가 존재하면 위에서 구한 값에 추가적인 계산이 필요하다.  
 위의 식은 두 물체의 충돌 방향이 두 물체의 중심을 이은 직선과 같을 때 성립한다.
 
 ![alt text](./image/2d_collision.png)
 
-따라서 그림에서와 같이 두 물체가 $ u_1 $, $ u_2 $로 충돌할 때, 속도 벡터를 분해하여 공의 중심을 있는 방향의 속도끼리 계산한 후, 나머지 성분의 속도를 합해줘야 한다.
+따라서 그림에서와 같이 두 물체가 $u_1$, $u_2$로 충돌할 때, 속도 벡터를 분해하여  
+공의 중심을 잇는 방향의 속도끼리 계산한 후, 나머지 성분의 속도를 합해줘야 한다.
 
 벡터를 특정 방향으로 분해하는 방법은 벡터의 내적을 이용하면 된다.
 
 ![alt text](./image/product.png)
 
-속도 벡터가 $\vec{A}$, 충돌 방향 벡터가 $\vec{B}$일 때, $\vec{A}$와 $\vec{B}$를 내적하면 $\vec{B}$방향에 대한 $\vec{A}$의 크기를 구할 수 있다.
-다른 방향의 크기는 $\vec{B}$를 90도 회전시킨 벡터에 대해 계산하면 된다.
-회전 공식은 다음과 같다
+속도 벡터가 $\vec{A}$, 충돌 방향 벡터가 $\vec{B}$일 때, $\vec{A}$와 $\vec{B}$를 내적하면 $\vec{B}$방향에 대한 $\vec{A}$의 크기를 구할 수 있다.  
+다른 방향의 크기는 $\vec{B}$를 90도 회전시킨 벡터에 대해 계산하면 된다.  
+회전각 $\theta$에 따른 회전 공식은 다음과 같다.  
+
 $$
-\begin{bmatrix} x' \\ y' \end{bmatrix} = \begin{bmatrix}
+\begin{bmatrix} 
+x' \\ 
+y' \end{bmatrix} = 
+\begin{bmatrix}
 \cos \theta & -\sin \theta \\
 \sin \theta & \cos \theta
-\end{bmatrix} \begin{bmatrix} x \\ y \end{bmatrix}
+\end{bmatrix} 
+\begin{bmatrix} 
+x \\ 
+y 
+\end{bmatrix}
 $$
 
-상세 구현은 elastic 함수에 작성되어 있다.
+상세 구현은 [`elastic`](https://github.com/Forte-NaoP/Univ-Project/blob/main/Computer-Graphics/Simulate-Elastic-Collision/src/main.cpp#L83) 함수에 작성되어 있다.
