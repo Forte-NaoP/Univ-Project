@@ -88,19 +88,24 @@ $T(Translation), R(Rotation), S (Scale)$
 ###### **뷰 행렬 계산**
 
 1. 전방 벡터:
+
+   $$\mathbf{F} = \frac{\mathbf{Target} - \mathbf{C}}{||\mathbf{Target} - \mathbf{C}||}
    $$
-   \mathbf{F} = \frac{\mathbf{Target} - \mathbf{C}}{||\mathbf{Target} - \mathbf{C}||}
-   $$
+
 2. 오른쪽 벡터:
+
    $$
    \mathbf{R} = \frac{\mathbf{F} \times \mathbf{Up}}{||\mathbf{F} \times \mathbf{Up}||}
    $$
+
 3. 새로운 위쪽 벡터:
+
    $$
    \mathbf{U} = \mathbf{R} \times \mathbf{F}
    $$
 
 4. 뷰 변환 행렬 $ V $:
+
    $$
    V =
    \begin{bmatrix}
@@ -136,6 +141,7 @@ $T(Translation), R(Rotation), S (Scale)$
 
 - **특징**: 멀리 있는 객체는 작게, 가까운 객체는 크게 보이도록.
 - **행렬 형태**:
+
   $$
   P =
   \begin{bmatrix}
@@ -155,6 +161,7 @@ $T(Translation), R(Rotation), S (Scale)$
 
 - **특징**: 멀리 있는 객체도 동일한 크기로 보임.
 - **행렬 형태**:
+
   $$
   P =
   \begin{bmatrix}
@@ -237,12 +244,15 @@ Primitive(기본 도형: 점, 선, 삼각형 등)를 픽셀(fragment)로 변환�
    - 렌더링할 뷰포트 영역에 맞게 조정.
 
 2. **과정**:
+
    $$
    x_{\text{screen}} = \frac{x_{\text{ndc} } + 1}{2} \cdot w_{\text{viewport}} + x_{\text{origin}}
    $$
+
    $$
    y_{\text{screen}} = \frac{y_{\text{ndc} } + 1}{2} \cdot h_{\text{viewport}} + y_{\text{origin}}
    $$
+
    - $ x_{\text{ndc} }, y_{\text{ndc} } $: NDC 좌표.
    - $ w_{\text{viewport}}, h_{\text{viewport}} $: 뷰포트의 너비와 높이.
    - $ x_{\text{origin}}, y_{\text{origin}} $: 뷰포트의 시작 좌표.
@@ -309,3 +319,4 @@ CPU와 쉐이더 코드 간 데이터 전달은 다음 방식으로 이루어진
 
 [opengl-graphics-pipeline](https://github.com/rlatkddn212/opengl-graphics-pipeline/blob/master/README.md)
 [[OpenGL ES를 이용한 3차원 컴퓨터 그래픽스 입문] 챕터 7 - 래스터라이저](https://j1y00h4.tistory.com/10)
+[[OpenGL로 배우는 컴퓨터 그래픽스] Chapter 07. 투상변환과 뷰포트변환](https://wjdgh283.tistory.com/entry/OpenGL%EB%A1%9C-%EB%B0%B0%EC%9A%B0%EB%8A%94-%EC%BB%B4%ED%93%A8%ED%84%B0-%EA%B7%B8%EB%9E%98%ED%94%BD%EC%8A%A4-Chapter-07-%ED%88%AC%EC%83%81%EB%B3%80%ED%99%98%EA%B3%BC-%EB%B7%B0%ED%8F%AC%ED%8A%B8%EB%B3%80%ED%99%98)
