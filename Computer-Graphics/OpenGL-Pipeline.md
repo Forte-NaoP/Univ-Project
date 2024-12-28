@@ -8,33 +8,33 @@
 
 ---
 
-### 1. Application (CPU) - Vertex Specification
+## 1. Application (CPU) - Vertex Specification
 
 어플리케이션이 실행되며 API 호출을 통해 Vertex, Color, Texture 좌표 등의 데이터를 준비한다.  
 이후 `glDrawArrays`, `glDrawElements`등의 API 호출을 통해 렌더링 시작
 
 ---
 
-### 2. Vertex Shatder (GPU)
+## 2. Vertex Shatder (GPU)
 
 정점 데이터를 처리하여 화면 좌표로 변환한다.
 모델, 뷰, 투영에 행렬을 사용한 변환 수행
 
 ---
 
-#### **1. 변환 종류**
+### **1. 변환 종류**
 
-##### **(1) 모델 좌표 → 월드 좌표 (모델 변환)**
+#### **(1) 모델 좌표 → 월드 좌표 (모델 변환)**
 
 - 객체의 로컬 좌표(모델 좌표)를 월드 좌표계로 변환.
 - **모델 변환 행렬** $M$ 사용.
 
-##### **(2) 월드 좌표 → 뷰 좌표 (뷰 변환)**
+#### **(2) 월드 좌표 → 뷰 좌표 (뷰 변환)**
 
 - 카메라(또는 관찰자)의 위치와 방향을 기준으로 월드 좌표를 변환.
 - **뷰 변환 행렬** $V$ 사용.
 
-##### **(3) 뷰 좌표 → 클립 좌표 (투영 변환)**
+#### **(3) 뷰 좌표 → 클립 좌표 (투영 변환)**
 
 - 3D 공간을 2D 화면에 투영.
 - 원근법(Perspective) 또는 직교(Orthographic) 투영 방식 사용.
@@ -42,9 +42,9 @@
 
 ---
 
-#### **2. 행렬 변환**
+### **2. 행렬 변환**
 
-##### **(1) 모델-뷰-투영 행렬 (MVP)**
+#### **(1) 모델-뷰-투영 행렬 (MVP)**
 
 - 각 단계에서 적용되는 행렬을 결합하여 전체 변환을 하나의 행렬로 표현 가능:
 
@@ -63,7 +63,7 @@
 
 ---
 
-##### **(2) 모델 변환 행렬**
+#### **(2) 모델 변환 행렬**
 
 ![alt text](./images/model.png)
 ![alt text](./images/transform_matrix.png)
@@ -73,37 +73,37 @@ $T(Translation), R(Rotation), S (Scale)$
 
 ---
 
-##### **(3) 뷰 변환 행렬**
+#### **(3) 뷰 변환 행렬**
 
 - 카메라의 위치와 방향을 기준으로 월드 좌표계를 카메라 좌표계(View Space)로 변환.
 - OpenGL에서는 일반적으로 카메라가 원점(0,0,0)에 위치하고, $-Z$ 방향을 바라보는 것으로 가정.
 
-###### **구성 요소**
+- #### **구성 요소**
 
-- **카메라 위치** $\mathbf{C}$ (Eye Position).
-- **카메라 방향**:
-  - $\mathbf{F}$: 전방 벡터(Forward).
-  - $\mathbf{R}$: 오른쪽 벡터(Right).
-  - $\mathbf{U}$: 위쪽 벡터(Up).
+  - **카메라 위치** $\mathbf{C}$ (Eye Position).
+  - **카메라 방향**:
+    - $\mathbf{F}$: 전방 벡터(Forward).
+    - $\mathbf{R}$: 오른쪽 벡터(Right).
+    - $\mathbf{U}$: 위쪽 벡터(Up).
 
-###### **뷰 행렬 계산**
+- #### **뷰 행렬 계산**
 
-1. 전방 벡터:
+  - 전방 벡터:
 
    $$\mathbf{F} = \frac{\mathbf{Target} - \mathbf{C}}{||\mathbf{Target} - \mathbf{C}||}
    $$
 
-2. 오른쪽 벡터:
+  - 오른쪽 벡터:
 
    $$\mathbf{R} = \frac{\mathbf{F} \times \mathbf{Up}}{||\mathbf{F} \times \mathbf{Up}||}
    $$
 
-3. 새로운 위쪽 벡터:
+  - 새로운 위쪽 벡터:
 
    $$\mathbf{U} = \mathbf{R} \times \mathbf{F}
    $$
 
-4. 뷰 변환 행렬 $V$:
+  - 뷰 변환 행렬 $V$:
 
 $$
 \mathbf{V} = \begin{bmatrix}
@@ -130,15 +130,19 @@ $$
   );
   ```
 
-##### **(4) 투영 변환 행렬**
+#### **(4) 투영 변환 행렬**
 
 - 3D 공간을 2D 화면으로 투영.
 - 투영은 **원근 투영(Perspective Projection)** 또는 **직교 투영(Orthographic Projection)** 방식으로 이루어짐.
 
-###### **a. 원근 투영 (Perspective Projection)**
+- #### **1. 원근 투영 (Perspective Projection)**
 
-- **특징**: 멀리 있는 객체는 작게, 가까운 객체는 크게 보이도록.
-- **행렬 형태**:
+  - **특징**: 멀리 있는 객체는 작게, 가까운 객체는 크게 보이도록.
+  - **구성 요소**:
+    - `fov`: 시야각(Field of View).
+    - `aspect`: 화면 비율 (너비/높이).
+    - `near`, `far`: 가까운 평면과 먼 평면의 거리.
+  - **행렬 형태**:
 
 $$
 \mathbf{P} = \begin{bmatrix}
@@ -149,15 +153,14 @@ $$
 \end{bmatrix}
 $$
 
-- **구성 요소**:
-  - `fov`: 시야각(Field of View).
-  - `aspect`: 화면 비율 (너비/높이).
-  - `near`, `far`: 가까운 평면과 먼 평면의 거리.
+- #### **2. 직교 투영 (Orthographic Projection)**
 
-###### **b. 직교 투영 (Orthographic Projection)**
-
-- **특징**: 멀리 있는 객체도 동일한 크기로 보임.
-- **행렬 형태**:
+  - **특징**: 멀리 있는 객체도 동일한 크기로 보임.
+  - **구성 요소**:
+    - `l, r`: 왼쪽, 오른쪽 평면.
+    - `t, b`: 위쪽, 아래쪽 평면.
+    - `near, far`: 가까운 평면과 먼 평면의 거리.
+  - **행렬 형태**:
 
 $$
 \mathbf{P}=\begin{bmatrix}
@@ -168,20 +171,15 @@ $$
 \end{bmatrix}
 $$
 
-- **구성 요소**:
-  - `l, r`: 왼쪽, 오른쪽 평면.
-  - `t, b`: 위쪽, 아래쪽 평면.
-  - `near, far`: 가까운 평면과 먼 평면의 거리.
-
 ---
 
-### 3. Primitive Assembly
+## 3. Primitive Assembly
 
 정점들을 가지고 점, 선, 삼각형(Primitive)를 만드는 단계
 
 ---
 
-### 4. Rasterisation
+## 4. Rasterisation
 
 Primitive(기본 도형: 점, 선, 삼각형 등)를 픽셀(fragment)로 변환하는 과정.
 
@@ -189,7 +187,7 @@ Primitive(기본 도형: 점, 선, 삼각형 등)를 픽셀(fragment)로 변환�
 
 ---
 
-#### **클리핑 (Clipping)**
+### **클리핑 (Clipping)**
 
 **Primitive(점, 선, 삼각형 등)가 화면에 표시될 수 있는 범위 안에 존재하는지 확인하고, 화면 밖의 부분을 제거**.
 
@@ -208,7 +206,7 @@ Primitive(기본 도형: 점, 선, 삼각형 등)를 픽셀(fragment)로 변환�
 
 ---
 
-#### **컬링 (Culling)**
+### **컬링 (Culling)**
 
 **카메라에서 보이지 않는 면(프리미티브)을 제거하여 렌더링 효율을 높이는 작업**.
 
@@ -231,7 +229,7 @@ Primitive(기본 도형: 점, 선, 삼각형 등)를 픽셀(fragment)로 변환�
 
 ---
 
-#### **뷰포트 변환 (Viewport Transformation)**
+### **뷰포트 변환 (Viewport Transformation)**
 
 **정규화된 장치 좌표(NDC, Normalized Device Coordinates)를 스크린 좌표(Screen Coordinates)로 변환**하는 작업입니다.
 
@@ -258,14 +256,14 @@ Primitive(기본 도형: 점, 선, 삼각형 등)를 픽셀(fragment)로 변환�
 
 ---
 
-### 5. Fragment Shader
+## 5. Fragment Shader
 
 각 픽셀(Fragment)에 대해 색상을 계산한다.
 조명 계산, 택스쳐 매핑등을 수행한다.
 
 ---
 
-### 6. Frame Buffer
+## 6. Frame Buffer
 
 Fragment Shader 출력이 화면의 픽셀에 표시된다.
 깊이 테스트, 스텐실 테스트등을 통해 사용할 Fragment를 정하고,  
@@ -275,7 +273,7 @@ Fragment Shader 출력이 화면의 픽셀에 표시된다.
 
 ## CPU 코드와 쉐이더 코드의 관계
 
-### 1. CPU 코드의 역할
+## 1. CPU 코드의 역할
 
 CPU 코드(애플리케이션) OpenGL 파이프라인을 제어하고 데이터를 준비한다.
 
@@ -289,7 +287,7 @@ CPU 코드(애플리케이션) OpenGL 파이프라인을 제어하고 데이터�
 - **렌더링 명령 전달**:
   - 드로우 호출로 GPU에 렌더링 명령 실행.
 
-### 2. 쉐이더 코드 (Vertex & Fragment)
+## 2. 쉐이더 코드 (Vertex & Fragment)
 
 - **Vertex Shader (`.vert` 파일)**:
   - 각 정점에 대해 처리 작업을 수행.
@@ -298,7 +296,7 @@ CPU 코드(애플리케이션) OpenGL 파이프라인을 제어하고 데이터�
   - 각 프래그먼트에 대해 처리 작업을 수행.
   - 색상, 조명, 텍스처 매핑을 계산.
 
-### 3. **데이터 전달**
+## 3. **데이터 전달**
 
 CPU와 쉐이더 코드 간 데이터 전달은 다음 방식으로 이루어진다:
 
@@ -309,8 +307,10 @@ CPU와 쉐이더 코드 간 데이터 전달은 다음 방식으로 이루어진
 
 ---
 
-#### 참고자료
+### 참고자료
 
 [opengl-graphics-pipeline](https://github.com/rlatkddn212/opengl-graphics-pipeline/blob/master/README.md)
+
 [[OpenGL ES를 이용한 3차원 컴퓨터 그래픽스 입문] 챕터 7 - 래스터라이저](https://j1y00h4.tistory.com/10)
+
 [[OpenGL로 배우는 컴퓨터 그래픽스] Chapter 07. 투상변환과 뷰포트변환](https://wjdgh283.tistory.com/entry/OpenGL%EB%A1%9C-%EB%B0%B0%EC%9A%B0%EB%8A%94-%EC%BB%B4%ED%93%A8%ED%84%B0-%EA%B7%B8%EB%9E%98%ED%94%BD%EC%8A%A4-Chapter-07-%ED%88%AC%EC%83%81%EB%B3%80%ED%99%98%EA%B3%BC-%EB%B7%B0%ED%8F%AC%ED%8A%B8%EB%B3%80%ED%99%98)
