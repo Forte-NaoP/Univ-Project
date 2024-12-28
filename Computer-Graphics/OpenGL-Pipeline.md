@@ -27,18 +27,18 @@
 ##### **(1) 모델 좌표 → 월드 좌표 (모델 변환)**
 
 - 객체의 로컬 좌표(모델 좌표)를 월드 좌표계로 변환.
-- **모델 변환 행렬** \(M\) 사용.
+- **모델 변환 행렬** $M$ 사용.
 
 ##### **(2) 월드 좌표 → 뷰 좌표 (뷰 변환)**
 
 - 카메라(또는 관찰자)의 위치와 방향을 기준으로 월드 좌표를 변환.
-- **뷰 변환 행렬** \(V\) 사용.
+- **뷰 변환 행렬** $V$ 사용.
 
 ##### **(3) 뷰 좌표 → 클립 좌표 (투영 변환)**
 
 - 3D 공간을 2D 화면에 투영.
 - 원근법(Perspective) 또는 직교(Orthographic) 투영 방식 사용.
-- **투영 변환 행렬** \(P\) 사용.
+- **투영 변환 행렬** $P$ 사용.
 
 ---
 
@@ -47,12 +47,12 @@
 ##### **(1) 모델-뷰-투영 행렬 (MVP)**
 
 - 각 단계에서 적용되는 행렬을 결합하여 전체 변환을 하나의 행렬로 표현 가능:
-  \[
+  $$
   \text{MVP} = P \cdot V \cdot M
-  \]
-  - \(M\): 모델 변환 행렬.
-  - \(V\): 뷰 변환 행렬.
-  - \(P\): 투영 변환 행렬.
+  $$
+  - $M$: 모델 변환 행렬.
+  - $V$: 뷰 변환 행렬.
+  - $P$: 투영 변환 행렬.
 
 - **버텍스 쉐이더**는 주로 아래와 같이 변환을 수행:
 
@@ -68,40 +68,40 @@
 ![alt text](./images/transform_matrix.png)
 
 객체의 각 정점에 행렬을 곱해 객체의 로컬 좌표를 월드 좌표로 변환할 수 있다.
-\(T(Translation), R(Rotation), S (Scale)\)
+$T(Translation), R(Rotation), S (Scale)$
 
 ---
 
 ##### **(3) 뷰 변환 행렬**
 
 - 카메라의 위치와 방향을 기준으로 월드 좌표계를 카메라 좌표계(View Space)로 변환.
-- OpenGL에서는 일반적으로 카메라가 원점(0,0,0)에 위치하고, \(-Z\) 방향을 바라보는 것으로 가정.
+- OpenGL에서는 일반적으로 카메라가 원점(0,0,0)에 위치하고, $-Z$ 방향을 바라보는 것으로 가정.
 
 ###### **구성 요소**
 
-- **카메라 위치** \(\mathbf{C}\) (Eye Position).
+- **카메라 위치** $\mathbf{C}$ (Eye Position).
 - **카메라 방향**:
-  - \(\mathbf{F}\): 전방 벡터(Forward).
-  - \(\mathbf{R}\): 오른쪽 벡터(Right).
-  - \(\mathbf{U}\): 위쪽 벡터(Up).
+  - $\mathbf{F}$: 전방 벡터(Forward).
+  - $\mathbf{R}$: 오른쪽 벡터(Right).
+  - $\mathbf{U}$: 위쪽 벡터(Up).
 
 ###### **뷰 행렬 계산**
 
 1. 전방 벡터:
-   \[
+   $$
    \mathbf{F} = \frac{\mathbf{Target} - \mathbf{C}}{||\mathbf{Target} - \mathbf{C}||}
-   \]
+   $$
 2. 오른쪽 벡터:
-   \[
+   $$
    \mathbf{R} = \frac{\mathbf{F} \times \mathbf{Up}}{||\mathbf{F} \times \mathbf{Up}||}
-   \]
+   $$
 3. 새로운 위쪽 벡터:
-   \[
+   $$
    \mathbf{U} = \mathbf{R} \times \mathbf{F}
-   \]
+   $$
 
-4. 뷰 변환 행렬 \( V \):
-   \[
+4. 뷰 변환 행렬 $ V $:
+   $$
    V =
    \begin{bmatrix}
    R_x & R_y & R_z & -\mathbf{R} \cdot \mathbf{C} \\
@@ -109,11 +109,11 @@
    -F_x & -F_y & -F_z & \mathbf{F} \cdot \mathbf{C} \\
    0 & 0 & 0 & 1
    \end{bmatrix}
-   \]
+   $$
 
 - 행렬의 구성:
-  - 상단 \(3 \times 3\): 카메라 방향 변환.
-  - \(-\mathbf{R} \cdot \mathbf{C}, -\mathbf{U} \cdot \mathbf{C}, \mathbf{F} \cdot \mathbf{C}\): 카메라 위치 변환.
+  - 상단 $3 \times 3$: 카메라 방향 변환.
+  - $-\mathbf{R} \cdot \mathbf{C}, -\mathbf{U} \cdot \mathbf{C}, \mathbf{F} \cdot \mathbf{C}$: 카메라 위치 변환.
 
 - **GLM의 `glm::lookAt` 함수**
 
@@ -136,7 +136,7 @@
 
 - **특징**: 멀리 있는 객체는 작게, 가까운 객체는 크게 보이도록.
 - **행렬 형태**:
-  \[
+  $$
   P =
   \begin{bmatrix}
   \frac{1}{\tan(\frac{fov}{2}) \cdot aspect} & 0 & 0 & 0 \\
@@ -144,7 +144,7 @@
   0 & 0 & \frac{-(far + near)}{far - near} & \frac{-2 \cdot far \cdot near}{far - near} \\
   0 & 0 & -1 & 0
   \end{bmatrix}
-  \]
+  $$
 
 - **구성 요소**:
   - `fov`: 시야각(Field of View).
@@ -155,7 +155,7 @@
 
 - **특징**: 멀리 있는 객체도 동일한 크기로 보임.
 - **행렬 형태**:
-  \[
+  $$
   P =
   \begin{bmatrix}
   \frac{2}{r-l} & 0 & 0 & -\frac{r+l}{r-l} \\
@@ -163,7 +163,7 @@
   0 & 0 & \frac{-2}{far-near} & -\frac{far+near}{far-near} \\
   0 & 0 & 0 & 1
   \end{bmatrix}
-  \]
+  $$
 
 - **구성 요소**:
   - `l, r`: 왼쪽, 오른쪽 평면.
@@ -192,7 +192,7 @@ Primitive(기본 도형: 점, 선, 삼각형 등)를 픽셀(fragment)로 변환�
 
 1. **목표**:
    - 클립 공간(Clip Space)에서 화면에 표시될 영역만 남기고, 표시되지 않을 부분을 제거.
-   - 클립 공간은 정규화된 좌표 영역(Normalized Device Coordinates, NDC)에서 \([-1, 1]\) 범위로 제한.
+   - 클립 공간은 정규화된 좌표 영역(Normalized Device Coordinates, NDC)에서 $[-1, 1]$ 범위로 제한.
 
 2. **과정**:
    - 클립 공간에서 벗어난 점은 잘려나거나 새로운 정점으로 분할.
@@ -233,19 +233,19 @@ Primitive(기본 도형: 점, 선, 삼각형 등)를 픽셀(fragment)로 변환�
 **정규화된 장치 좌표(NDC, Normalized Device Coordinates)를 스크린 좌표(Screen Coordinates)로 변환**하는 작업입니다.
 
 1. **목표**:
-   - 클립 공간에서 정규화된 좌표(\([-1, 1]\))를 실제 화면에서 픽셀 위치로 변환.
+   - 클립 공간에서 정규화된 좌표($[-1, 1]$)를 실제 화면에서 픽셀 위치로 변환.
    - 렌더링할 뷰포트 영역에 맞게 조정.
 
 2. **과정**:
-   \[
+   $$
    x_{\text{screen}} = \frac{x_{\text{ndc} } + 1}{2} \cdot w_{\text{viewport}} + x_{\text{origin}}
-   \]
-   \[
+   $$
+   $$
    y_{\text{screen}} = \frac{y_{\text{ndc} } + 1}{2} \cdot h_{\text{viewport}} + y_{\text{origin}}
-   \]
-   - \( x_{\text{ndc} }, y_{\text{ndc} } \): NDC 좌표.
-   - \( w_{\text{viewport}}, h_{\text{viewport}} \): 뷰포트의 너비와 높이.
-   - \( x_{\text{origin}}, y_{\text{origin}} \): 뷰포트의 시작 좌표.
+   $$
+   - $ x_{\text{ndc} }, y_{\text{ndc} } $: NDC 좌표.
+   - $ w_{\text{viewport}}, h_{\text{viewport}} $: 뷰포트의 너비와 높이.
+   - $ x_{\text{origin}}, y_{\text{origin}} $: 뷰포트의 시작 좌표.
 
 3. **특징**:
    - 화면에서 특정 영역만 렌더링할 수도 있음 (예: Split Screen, Render Target).
