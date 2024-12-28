@@ -105,12 +105,14 @@ $T(Translation), R(Rotation), S (Scale)$
 
 4. 뷰 변환 행렬 $V$:
 
-   $$\mathbf{V} = \begin{bmatrix}
-   R_x & R_y & R_z & -\mathbf{R} \cdot \mathbf{C} \\
-   U_x & U_y & U_z & -\mathbf{U} \cdot \mathbf{C} \\
-   -F_x & -F_y & -F_z & \mathbf{F} \cdot \mathbf{C} \\
-   0 & 0 & 0 & 1
-   \end{bmatrix}$$
+$$
+\mathbf{V} = \begin{bmatrix}
+R_x & R_y & R_z & -\mathbf{R} \cdot \mathbf{C} \\
+U_x & U_y & U_z & -\mathbf{U} \cdot \mathbf{C} \\
+-F_x & -F_y & -F_z & \mathbf{F} \cdot \mathbf{C} \\
+0 & 0 & 0 & 1
+\end{bmatrix}
+$$
 
 - 행렬의 구성:
   - 상단 $3 \times 3$: 카메라 방향 변환.
@@ -138,12 +140,14 @@ $T(Translation), R(Rotation), S (Scale)$
 - **특징**: 멀리 있는 객체는 작게, 가까운 객체는 크게 보이도록.
 - **행렬 형태**:
 
-  $$\mathbf{P} = \begin{bmatrix}
-  \frac{1}{\tan(\frac{fov}{2}) \cdot aspect} & 0 & 0 & 0 \\
-  0 & \frac{1}{\tan(\frac{fov}{2})} & 0 & 0 \\
-  0 & 0 & \frac{-(far + near)}{far - near} & \frac{-2 \cdot far \cdot near}{far - near} \\
-  0 & 0 & -1 & 0
-  \end{bmatrix}$$
+$$
+\mathbf{P} = \begin{bmatrix}
+\frac{1}{\tan(\frac{fov}{2}) \cdot aspect} & 0 & 0 & 0 \\
+0 & \frac{1}{\tan(\frac{fov}{2})} & 0 & 0 \\
+0 & 0 & \frac{-(far + near)}{far - near} & \frac{-2 \cdot far \cdot near}{far - near} \\
+0 & 0 & -1 & 0
+\end{bmatrix}
+$$
 
 - **구성 요소**:
   - `fov`: 시야각(Field of View).
@@ -155,12 +159,14 @@ $T(Translation), R(Rotation), S (Scale)$
 - **특징**: 멀리 있는 객체도 동일한 크기로 보임.
 - **행렬 형태**:
 
-  $$\mathbf{P}=\begin{bmatrix}
-  \frac{2}{r-l} & 0 & 0 & -\frac{r+l}{r-l} \\
-  0 & \frac{2}{t-b} & 0 & -\frac{t+b}{t-b} \\
-  0 & 0 & \frac{-2}{far-near} & -\frac{far+near}{far-near} \\
-  0 & 0 & 0 & 1
-  \end{bmatrix}$$
+$$
+\mathbf{P}=\begin{bmatrix}
+\frac{2}{r-l} & 0 & 0 & -\frac{r+l}{r-l} \\
+0 & \frac{2}{t-b} & 0 & -\frac{t+b}{t-b} \\
+0 & 0 & \frac{-2}{far-near} & -\frac{far+near}{far-near} \\
+0 & 0 & 0 & 1
+\end{bmatrix}
+$$
 
 - **구성 요소**:
   - `l, r`: 왼쪽, 오른쪽 평면.
