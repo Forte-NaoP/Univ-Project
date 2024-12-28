@@ -47,9 +47,10 @@
 ##### **(1) 모델-뷰-투영 행렬 (MVP)**
 
 - 각 단계에서 적용되는 행렬을 결합하여 전체 변환을 하나의 행렬로 표현 가능:
+
+  $$\text{MVP} = P \cdot V \cdot M
   $$
-  \text{MVP} = P \cdot V \cdot M
-  $$
+
   - $M$: 모델 변환 행렬.
   - $V$: 뷰 변환 행렬.
   - $P$: 투영 변환 행렬.
@@ -94,27 +95,22 @@ $T(Translation), R(Rotation), S (Scale)$
 
 2. 오른쪽 벡터:
 
-   $$
-   \mathbf{R} = \frac{\mathbf{F} \times \mathbf{Up}}{||\mathbf{F} \times \mathbf{Up}||}
+   $$\mathbf{R} = \frac{\mathbf{F} \times \mathbf{Up}}{||\mathbf{F} \times \mathbf{Up}||}
    $$
 
 3. 새로운 위쪽 벡터:
 
-   $$
-   \mathbf{U} = \mathbf{R} \times \mathbf{F}
+   $$\mathbf{U} = \mathbf{R} \times \mathbf{F}
    $$
 
-4. 뷰 변환 행렬 $ V $:
+4. 뷰 변환 행렬 $V$:
 
-   $$
-   V =
-   \begin{bmatrix}
+   $$\mathbf{V} = \begin{bmatrix}
    R_x & R_y & R_z & -\mathbf{R} \cdot \mathbf{C} \\
    U_x & U_y & U_z & -\mathbf{U} \cdot \mathbf{C} \\
    -F_x & -F_y & -F_z & \mathbf{F} \cdot \mathbf{C} \\
    0 & 0 & 0 & 1
-   \end{bmatrix}
-   $$
+   \end{bmatrix}$$
 
 - 행렬의 구성:
   - 상단 $3 \times 3$: 카메라 방향 변환.
@@ -142,15 +138,12 @@ $T(Translation), R(Rotation), S (Scale)$
 - **특징**: 멀리 있는 객체는 작게, 가까운 객체는 크게 보이도록.
 - **행렬 형태**:
 
-  $$
-  P =
-  \begin{bmatrix}
+  $$\mathbf{P} = \begin{bmatrix}
   \frac{1}{\tan(\frac{fov}{2}) \cdot aspect} & 0 & 0 & 0 \\
   0 & \frac{1}{\tan(\frac{fov}{2})} & 0 & 0 \\
   0 & 0 & \frac{-(far + near)}{far - near} & \frac{-2 \cdot far \cdot near}{far - near} \\
   0 & 0 & -1 & 0
-  \end{bmatrix}
-  $$
+  \end{bmatrix}$$
 
 - **구성 요소**:
   - `fov`: 시야각(Field of View).
@@ -162,15 +155,12 @@ $T(Translation), R(Rotation), S (Scale)$
 - **특징**: 멀리 있는 객체도 동일한 크기로 보임.
 - **행렬 형태**:
 
-  $$
-  P =
-  \begin{bmatrix}
+  $$\mathbf{P}=\begin{bmatrix}
   \frac{2}{r-l} & 0 & 0 & -\frac{r+l}{r-l} \\
   0 & \frac{2}{t-b} & 0 & -\frac{t+b}{t-b} \\
   0 & 0 & \frac{-2}{far-near} & -\frac{far+near}{far-near} \\
   0 & 0 & 0 & 1
-  \end{bmatrix}
-  $$
+  \end{bmatrix}$$
 
 - **구성 요소**:
   - `l, r`: 왼쪽, 오른쪽 평면.
@@ -245,17 +235,15 @@ Primitive(기본 도형: 점, 선, 삼각형 등)를 픽셀(fragment)로 변환�
 
 2. **과정**:
 
-   $$
-   x_{\text{screen}} = \frac{x_{\text{ndc} } + 1}{2} \cdot w_{\text{viewport}} + x_{\text{origin}}
-   $$
-
-   $$
-   y_{\text{screen}} = \frac{y_{\text{ndc} } + 1}{2} \cdot h_{\text{viewport}} + y_{\text{origin}}
+   $$x_{\text{screen}} = \frac{x_{\text{ndc} } + 1}{2} \cdot w_{\text{viewport}} + x_{\text{origin}}
    $$
 
-   - $ x_{\text{ndc} }, y_{\text{ndc} } $: NDC 좌표.
-   - $ w_{\text{viewport}}, h_{\text{viewport}} $: 뷰포트의 너비와 높이.
-   - $ x_{\text{origin}}, y_{\text{origin}} $: 뷰포트의 시작 좌표.
+   $$y_{\text{screen}} = \frac{y_{\text{ndc} } + 1}{2} \cdot h_{\text{viewport}} + y_{\text{origin}}
+   $$
+
+   - $x_{\text{ndc} }, y_{\text{ndc} }$: NDC 좌표.
+   - $w_{\text{viewport}}, h_{\text{viewport}}$: 뷰포트의 너비와 높이.
+   - $x_{\text{origin}}, y_{\text{origin}}$: 뷰포트의 시작 좌표.
 
 3. **특징**:
    - 화면에서 특정 영역만 렌더링할 수도 있음 (예: Split Screen, Render Target).
