@@ -1,0 +1,30 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build Solar-System",
+      "type": "shell",
+      "command": "MSBuild",
+      "args": [
+        "${workspaceFolder}/src/trackball.vcxproj", 
+        "/p:Configuration=Release",                       
+        "/p:Platform=Win32"                              
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Run Solar-System",
+      "type": "shell",
+      "dependsOn": "Build Solar-System", 
+      "command": "${workspaceFolder}/bin/trackball.exe",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    }
+  ]
+}
