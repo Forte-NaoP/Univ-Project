@@ -1,0 +1,30 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build Sphere",
+      "type": "shell",
+      "command": "MSBuild",
+      "args": [
+        "${workspaceFolder}/src/cgcirc.vcxproj", 
+        "/p:Configuration=Release",                       
+        "/p:Platform=Win32"                              
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Run Sphere",
+      "type": "shell",
+      "dependsOn": "Build Sphere", 
+      "command": "${workspaceFolder}/bin/cgcirc.exe",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
+    }
+  ]
+}
