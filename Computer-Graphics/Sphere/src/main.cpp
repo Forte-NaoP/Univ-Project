@@ -11,7 +11,7 @@ static const char*	frag_shader_path = "../bin/shaders/circ.frag";
 static const uint	MIN_TESS = 3;		// minimum tessellation factor (down to a triangle)
 static const uint	MAX_TESS = 256;		// maximum tessellation factor (up to 256 triangles)
 static const uint	H_TESS = 6;
-static const uint	NUM_TESS = 96;
+static const uint	NUM_TESS = 24;
 //uint				NUM_TESS = 7;		// initial tessellation factor of the circle as a polygon
 
 
@@ -45,6 +45,8 @@ std::vector<vertex>	vertex_list;	// host-side vertices
 std::vector<uint>	index_list;		// host-side indices
 float offset_list[3 * NUM_SPHERE];
 int unit_t, unit_p;
+
+// 점 (i, j)를 원점 기준 단위 벡터로 변환
 void make_unit(int i, int j)
 {
 	float theta = 2 * PI * i / 18;
@@ -54,11 +56,13 @@ void make_unit(int i, int j)
 	float z = cos(theta);
 	unit = vec3(x, y, z);
 }
-									//*******************************************************************
+									
 void update()
 {
 	if (bRotation) t += 0.1f * speed;
-	make_unit(unit_t, unit_p);
+	make_unit(unit_t, unit_p);	
+	
+	// unit을 기준으로 축으로 하는 회전 변환 행렬
 	mat4 rotation_matrix = mat4::rotate(unit, t);
 
 	// update uniform variables in vertex/fragment shaders
@@ -268,6 +272,8 @@ void update_circle_vertices(uint N)
 {
 	vertex_list.clear();
 
+	// 구면 좌표계 --> 직교 좌표계 변환식 참조
+	// https://ko.wikipedia.org/wiki/%EA%B5%AC%EB%A9%B4%EC%A2%8C%ED%91%9C%EA%B3%84
 	for (int i = 0; i <= NUM_TESS; i++) {
 		float theta = PI * i / NUM_TESS;
 		for (int j = 0; j <= NUM_TESS; j++) {

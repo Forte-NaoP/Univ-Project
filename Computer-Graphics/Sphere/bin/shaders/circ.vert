@@ -18,6 +18,7 @@ uniform mat4	projection_matrix;
 
 void main()
 {	
+	// 모델 좌표계 변환 (Scale, Rotate)
 	gl_Position = projection_matrix * model_matrix *   vec4( position*radius, 1 );
 	gl_Position.xy *= aspect_ratio>1 ? vec2(1/aspect_ratio,1) : vec2(1,aspect_ratio);
 	// another output passed via varying variable
