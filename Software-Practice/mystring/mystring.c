@@ -43,60 +43,58 @@ char *reserve(char *str, size_t size) {
 /* Conversions string to numeric formats */
 int32_t atoi_32(const char *str) {
     int32_t result = 0;
-    char *cur = str;
-    size_t len = strlen(str);
     bool sign = false;
 
-    if (str[0] == '-') {
-        sign = true;
-        ++cur;
-        --len;
-    }
-
-    int32_t digit = 1;
-    for (size_t i = 0; i < len - 1; ++i) {
-        digit *= 10;
+    while (isspace(*str)) {
+        ++str;
     }
     
-    while (*cur != '\0') {
-        result += (*cur - '0') * digit;
-        ++cur; digit /= 10;
+    switch (*str) {
+        case '-':
+            sign = true;
+        case '+':
+            ++str;
+            break;
     }
 
-    if (sign) {
-        result = -result;
+    while ('0' <= *str && *str <= '9') {
+        int32_t digit = *str - '0';
+        if (result > (INT32_MAX - digit) / 10) {
+            return sign ? INT32_MIN : INT32_MAX;
+        }
+        result = result * 10 + digit;
+        ++str;
     }
 
-    return result;
+    return sign ? -result : result;
 }
 
 int64_t atoi_64(const char *str) {
     int64_t result = 0;
-    char *cur = str;
-    size_t len = strlen(str);
     bool sign = false;
 
-    if (str[0] == '-') {
-        sign = true;
-        ++cur;
-        --len;
-    }
-
-    int64_t digit = 1;
-    for (size_t i = 0; i < len - 1; ++i) {
-        digit *= 10;
+    while (isspace(*str)) {
+        ++str;
     }
     
-    while (*cur != '\0') {
-        result += (*cur - '0') * digit;
-        ++cur; digit /= 10;
+    switch (*str) {
+        case '-':
+            sign = true;
+        case '+':
+            ++str;
+            break;
     }
 
-    if (sign) {
-        result = -result;
+    while ('0' <= *str && *str <= '9') {
+        int64_t digit = *str - '0';
+        if (result > (INT32_MAX - digit) / 10) {
+            return sign ? INT32_MIN : INT32_MAX;
+        }
+        result = result * 10 + digit;
+        ++str;
     }
 
-    return result;
+    return sign ? -result : result;
 }
 
 /* Conversions numeric formats to string */
@@ -104,20 +102,29 @@ char *int2str(char *dest, int32_t num) {
     char *ptr = dest == NULL ? new_string(16) : dest;
     size_t len = 0;
     bool sign = false;
-    
-    if (num < 0) {
-        sign = true;
-        num = -num;
+    uint32_t abs_num;
+
+    if (num == 0) {
+        ptr[len++] = '0';
+    } else {
+        if (num < 0) {
+            sign = true;
+            abs_num = (uint32_t)(-(num + 1)) + 1;
+        } else {
+            abs_num = (uint32_t)num;
+        }
+
+        while (abs_num > 0) {
+            ptr[len++] = abs_num % 10 + '0';
+            abs_num /= 10;
+        }
+        
+        if (sign) {
+            ptr[len++] = '-';
+        }
     }
 
-    while (num > 0) {
-        ptr[len++] = num % 10 + '0';
-        num /= 10;
-    }
-    
-    if (sign) {
-        ptr[len++] = '-';
-    }
+    ptr[len] = '\0';
 
     for (size_t i = 0; i < len / 2; ++i) {
         ptr[i] ^= ptr[len - i - 1] ^= ptr[i] ^= ptr[len - i - 1];
@@ -142,8 +149,9 @@ char *strncpy(char *dst, const char *src, size_t count) {
         *cur++ = *src++;
         --count;
     }
-    while(count--) {
+    while(count > 0) {
         *cur++ = '\0';
+        --count;
     }
     return dst;
 }
@@ -193,9 +201,7 @@ int strcmp(const char *lhs, const char *rhs) {
         ++lhs;
         ++rhs;
     }
-    if (*lhs > *rhs) return 1;
-    if (*lhs < *rhs) return -1;
-    return 0;
+    return (unsigned char)*lhs - (unsigned char)*rhs;
 }
 
 int strncmp(const char *lhs, const char *rhs, size_t count) {
@@ -207,8 +213,7 @@ int strncmp(const char *lhs, const char *rhs, size_t count) {
         --count;
     }
     if(count > 0) {
-        if(*lhs > *rhs) return 1;
-        if(*lhs < *rhs) return -1;
+        return (unsigned char)*lhs - (unsigned char)*rhs;
     }
     return 0;
 }
