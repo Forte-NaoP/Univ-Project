@@ -29,10 +29,10 @@
 #include <pthread.h>
 
 #include "mystring.h"
-#include "pool.h"
+#include "memory_pool.h"
 #include "bst.h"
 #include "collect.h"
-#include "taskqueue.h"
+#include "task_queue.h"
 
 #define SEM_NAME "/collect_sem"
 #define MAX_SEM_COUNT 1

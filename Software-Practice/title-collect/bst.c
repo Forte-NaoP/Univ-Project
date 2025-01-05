@@ -1,6 +1,6 @@
 #include "mystring.h"
 #include "bst.h"
-#include "pool.h"
+#include "memory_pool.h"
 
 BST* BST_new(MemoryPool *pool, char *domain, char *title) {
     BST *node = (BST *)MemoryPool_alloc(pool);

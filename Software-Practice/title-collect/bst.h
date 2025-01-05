@@ -2,7 +2,7 @@
 #define BST_H
 
 #include "mystring.h"
-#include "pool.h"
+#include "memory_pool.h"
 
 #define MAX_DOMAIN_SIZE 128
 #define MAX_TITLE_SIZE 1024

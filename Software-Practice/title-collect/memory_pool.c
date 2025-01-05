@@ -1,4 +1,4 @@
-#include "pool.h"
+#include "memory_pool.h"
 
 void MemoryPool_init(MemoryPool *mp, size_t object_size, const char *name) {
 #ifdef USE_SHARED_MEMORY

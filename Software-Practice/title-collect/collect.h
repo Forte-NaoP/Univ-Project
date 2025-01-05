@@ -15,9 +15,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "pool.h"
+#include "memory_pool.h"
 #include "bst.h"
-#include "taskqueue.h"
+#include "task_queue.h"
 
 char *find_title(const char *name);
 char *concat_string(const char *str1, ...);

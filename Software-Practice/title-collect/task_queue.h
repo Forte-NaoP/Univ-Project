@@ -6,7 +6,7 @@
 #include <pthread.h>
 
 #include "collect.h"
-#include "pool.h"
+#include "memory_pool.h"
 #include "bst.h"
 
 typedef struct Task {
