@@ -189,10 +189,8 @@ void collect() {
         }
         for (size_t i = 0; line_count > 0; ++i, --line_count) {
             char name[16];
-            pthread_rwlock_wrlock(&rwlock);
             current_counter += 1;
             int2str(name, current_counter);
-            pthread_rwlock_unlock(&rwlock);
             if (strstr(lines[i], "://") != NULL) {
                 Task *task = (Task *)malloc(sizeof(Task));
                 strcpy(task->url, lines[i]);
