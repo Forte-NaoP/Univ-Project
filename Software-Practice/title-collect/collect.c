@@ -118,12 +118,24 @@ void wget(const char *url, const char *name, pthread_rwlock_t *rwlock, MemoryPoo
     }
 }
 
-void print() {
-
+void print(BST *root, char *domain, const char *name) {
+    BST *node = BST_search(root, domain);
+    char *output = NULL;
+    if (node != NULL) {
+        output = concat_string(name, ">", node->domain, ":", node->title, "\n", NULL);
+    } else {
+        output = concat_string(name, ">", "Not Available\n", NULL);
+    }
+    write(1, output, strlen(output));
+    free(output);
 }
 
-void status() {
-
+void status(size_t stat_count, const char *name) {
+    char collected[16] = {'\0'};
+    int2str(collected, stat_count);
+    char *output = concat_string(name, ">", collected, " titles\n", NULL);
+    write(1, output, strlen(output));
+    free(output);
 }
 
 void load() {

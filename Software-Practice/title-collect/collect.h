@@ -22,10 +22,10 @@
 char *find_title(const char *name);
 char *concat_string(const char *str1, ...);
 char *get_domain_name(const char *url);
-void wget(const char *url, const char *name, pthread_rwlock_t *rwlock, MemoryPool *bst_pool, BST **root, size_t *done_count);
 
-void print();
-void status();
+void wget(const char *url, const char *name, pthread_rwlock_t *rwlock, MemoryPool *bst_pool, BST **root, size_t *done_count);
+void print(BST *root, char *domain, const char *name);
+void status(size_t stat_count, const char *name);
 void load();
 void quit();
 

@@ -199,22 +199,10 @@ void collect() {
                 thread_pool_add_task(&thread_pool, task);
             } else if (strstr(lines[i], "print") != NULL) {
                 thread_pool_wait(&thread_pool);
-                BST *node = BST_search(root, lines[i] + 6);
-                char *output = NULL;
-                if (node != NULL) {
-                    output = concat_string(name, ">", node->domain, ":", node->title, "\n", NULL);
-                } else {
-                    output = concat_string(name, ">", "Not Available\n", NULL);
-                }
-                write(1, output, strlen(output));
-                free(output);
+                print(root, lines[i] + 6, name);
             } else if (strstr(lines[i], "stat") != NULL) {
                 thread_pool_wait(&thread_pool);
-                char collected[16] = {'\0'};
-                int2str(collected, stat_count);
-                char *output = concat_string(name, ">", collected, " titles\n", NULL);
-                write(1, output, strlen(output));
-                free(output);
+                status(stat_count, name);
             } else if (strstr(lines[i], "load") != NULL) {
                 backup(&backup_stack, lines + i + 1, line_count - 1, input);
                 input = open(lines[i] + 5, O_RDONLY);
