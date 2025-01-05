@@ -41,4 +41,10 @@ void TaskQueue_destroy(TaskQueue *queue);
 void TaskQueue_push(TaskQueue *queue, Task *task);
 Task *TaskQueue_pop(TaskQueue *queue);
 
+void thread_pool_init(ThreadPool *pool, void *(*worker)(void *), size_t *count,  pthread_rwlock_t *rwlock, MemoryPool *bst_pool, BST **root);
+void thread_pool_add_task(ThreadPool *pool, Task *task);
+void thread_pool_wait(ThreadPool *pool);
+void thread_pool_destroy(ThreadPool *pool);
+
+
 #endif

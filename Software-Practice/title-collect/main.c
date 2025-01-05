@@ -142,53 +142,8 @@ void *thread_worker(void *arg) {
     return NULL;
 }
 
-void thread_pool_init(ThreadPool *pool) {
-    TaskQueue_init(&pool->task_queue);
-    pthread_mutex_init(&pool->count_lock, NULL);
-    pthread_cond_init(&pool->all_done, NULL);
-    pool->active_wget_count = 0;
-    pool->done_wget_count = &stat_count;
-    pool->rwlock = &rwlock;
-    pool->bst_pool = &bst_pool;
-    pool->root = &root;
-
-    for (int i = 0; i < MAX_THREAD_COUNT; ++i) {
-        pthread_create(&pool->threads[i], NULL, thread_worker, pool);
-    }
-}
-
-void thread_pool_add_task(ThreadPool *pool, Task *task) {
-    pthread_mutex_lock(&pool->count_lock);
-    pool->active_wget_count++;
-    pthread_mutex_unlock(&pool->count_lock);
-    TaskQueue_push(&pool->task_queue, task);
-}
-
-void thread_pool_wait(ThreadPool *pool) {
-    pthread_mutex_lock(&pool->count_lock);
-    while (pool->active_wget_count > 0) {
-        pthread_cond_wait(&pool->all_done, &pool->count_lock);
-    }
-    pthread_mutex_unlock(&pool->count_lock);
-}
-
-void thread_pool_destroy(ThreadPool *pool) {
-    for (int i = 0; i < MAX_THREAD_COUNT; ++i) {
-        Task *final_task = (Task *)malloc(sizeof(Task));
-        final_task->final = true;
-        final_task->next = NULL;
-        thread_pool_add_task(pool, final_task);
-    }
-    for (int i = 0; i < MAX_THREAD_COUNT; ++i) {
-        pthread_join(pool->threads[i], NULL);
-    }
-    TaskQueue_destroy(&pool->task_queue);
-    pthread_mutex_destroy(&pool->count_lock);
-    pthread_cond_destroy(&pool->all_done);
-}
-
 void initialize() {
-    thread_pool_init(&thread_pool);
+    thread_pool_init(&thread_pool, thread_worker, &stat_count, &rwlock, &bst_pool, &root);
     MemoryPool_init(&bst_pool, sizeof(BST), "/bst_pool");
     pthread_rwlock_init(&rwlock, NULL);
     backup_stack.top = NULL;
@@ -275,8 +230,6 @@ void collect() {
     }
     finalize();
 }
-
-// 0 1 2 3 4
 
 int main(int argc, char* argv[]) {
     collect();
