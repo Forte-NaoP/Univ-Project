@@ -4,9 +4,12 @@
 #include "mystring.h"
 #include "pool.h"
 
+#define MAX_DOMAIN_SIZE 128
+#define MAX_TITLE_SIZE 1024
+
 typedef struct BST {
-    char title[1024];
-    char domain[128];
+    char title[MAX_TITLE_SIZE];
+    char domain[MAX_DOMAIN_SIZE];
     struct BST *left;
     struct BST *right;
 } BST;
