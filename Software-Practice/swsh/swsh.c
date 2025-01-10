@@ -57,7 +57,7 @@ int main() {
         int cmd_cnt = -1;
         COMMAND **cmds = split_commands(input, &cmd_cnt);
         if (cmd_cnt == -1) {
-            printf("Error: Invalid command\n");
+            write(STDERR_FILENO, "swsh: Command not found\n", 24);
             continue;
         }
         
