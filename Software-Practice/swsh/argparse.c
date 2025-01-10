@@ -67,7 +67,7 @@ COMMAND **split_commands(char *input, int *cmd_cnt) {
         if (*cur == '|') cnt += 1;
         cur += 1;
     }
-    // printf("%s pipe: %d\n", input, cnt);
+
     COMMAND **cmds = (COMMAND **)malloc(sizeof(COMMAND *) * (cnt));
     cur = input;
     char *nxt = NULL;
@@ -150,19 +150,11 @@ bool parse_redirection(char *str, COMMAND *cmd) {
         *in_token = '\0';
     }
 
-    // if (cmd->input != NULL) {
-    //     printf("in_redirect %s\n", cmd->input);
-    // }
-    // if (cmd->output != NULL) {
-    //     printf("out_redirect %s\n", cmd->output);
-    // }
-
     return true;
 }
 
 bool parse_command(char *str, COMMAND *cmd) {
     char *saveptr = NULL;
-    // printf("cmd_str: %s---\n", str);
     char *cmd_name = strtok_r(str, " ", &saveptr);    
     int type = -1, idx = 0;
     for (int i = 0; i < 4 && type == -1; ++i) {
@@ -194,20 +186,18 @@ bool parse_command(char *str, COMMAND *cmd) {
 
     cmd->cmd = strdup(cmd_name);
     char *cur = saveptr;
-    // printf("where: %s---\n", saveptr);
-    
+
     if (*saveptr != '\0') cmd->argc = 1;
     while (*cur != '\0') {
         if (*cur == ' ') cmd->argc += 1;
         cur += 1;
     }
-    // printf("argc: %d\n", cmd->argc);
+
     if (cmd->argc > 0) {
         cmd->argv = (char **)malloc(sizeof(char *) * (cmd->argc));
         int idx = 0;
         while (*saveptr != '\0') {
             char *arg = strtok_r(NULL, " ", &saveptr);
-            // printf("where: %s---\n", arg);
             cmd->argv[idx] = strdup(arg);
             idx += 1;
         }
