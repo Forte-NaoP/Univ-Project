@@ -11,7 +11,7 @@ ALL_OBJ = $(OBJS:%=%.o)
 all: $(OBJS)
 
 clean:
-	$(RM) $(BIN)/$(OBJS:%=$(BIN)/%) $(ALL_OBJ)
+	$(RM) $(OBJS:%=$(BIN)/%) $(ALL_OBJ)
 
 # normally still defined /usr/share/lib/make/make.rules
 CC = gcc
