@@ -1,3 +1,6 @@
+#ifndef MYSTRING_H
+#define MYSTRING_H
+
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -35,3 +38,5 @@ extern char *strtok_r(char *str, const char *delim, char **saveptr);
 /* Character array manipulation */
 extern void *memcpy(void *dest, const void *str, size_t n);
 extern void *memset(void *dest, int ch, size_t count);
+
+#endif
