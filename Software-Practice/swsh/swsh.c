@@ -1,3 +1,5 @@
+#define _XOPEN_SOURCE 700
+
 #include <errno.h>
 #include <fcntl.h>
 #include <stdbool.h>
@@ -14,9 +16,6 @@
 #include "mystring.h"
 #include "argparse.h"
 #include "commands/inline.h"
-
-#define INPUT_PIPE "./swsh_input"
-#define OUTPUT_PIPE "./swsh_output"
 
 const char* custom_binary = "./commands/bin:";
 
@@ -47,6 +46,16 @@ void restore_redirection(int stdin_fd, int stdout_fd) {
     close(stdout_fd);
 }
 
+void chld_handler(int signo) {
+    pid_t pid;
+    int status;
+    while((pid = waitpid(-1, &status, WUNTRACED)) > 0) {
+        if(WIFSTOPPED(status)) {
+            kill(-pid, SIGKILL);
+        }
+    }
+}
+
 int main() {
     char input[256];
     char output[256];
@@ -57,28 +66,28 @@ int main() {
     strcat(new_path, path);
     setenv("PATH", new_path, 1);
 
-    // struct sigaction sa;
+    struct sigaction sa;
     
-    // sa.sa_handler = SIG_IGN;
-    // sa.sa_flags = 0;
-    // sigemptyset(&sa.sa_mask);
-    // if (sigaction(SIGINT, &sa, NULL) == -1) {
-    //     perror("sigaction");
-    //     exit(EXIT_FAILURE);
-    // }
+    sa.sa_handler = SIG_IGN;
+    sa.sa_flags = 0;
+    sigemptyset(&sa.sa_mask);
+    if (sigaction(SIGINT, &sa, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
 
-    // sa.sa_handler = SIG_IGN;
-    // if (sigaction(SIGTSTP, &sa, NULL) == -1) {
-    //     perror("sigaction");
-    //     exit(EXIT_FAILURE);
-    // }
+    sa.sa_handler = SIG_IGN;
+    if (sigaction(SIGTSTP, &sa, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
 
-    // sa.sa_handler = chld_handler;
-    // sa.sa_flags = SA_RESTART;
-    // if (sigaction(SIGCHLD, &sa, NULL) == -1) {
-    //     perror("sigaction");
-    //     exit(EXIT_FAILURE);
-    // }
+    sa.sa_handler = chld_handler;
+    sa.sa_flags = SA_RESTART;
+    if (sigaction(SIGCHLD, &sa, NULL) == -1) {
+        perror("sigaction");
+        exit(EXIT_FAILURE);
+    }
 
     while ((bytes = read(0, input, 256)) > 0) {
         input[bytes - 1] = '\0';
@@ -124,7 +133,6 @@ int main() {
                     exit(EXIT_FAILURE);
                 }
             } else {
-                // setup_redirection(cmd, i == 0, i == cmd_cnt - 1, prev_pipe_fd, pipe_fds);
                 if (strcmp(cmd->cmd, "cd") == 0) {
                     cd(cmd->argv[1]);
                 } else if (strcmp(cmd->cmd, "pwd") == 0) {
@@ -136,16 +144,13 @@ int main() {
                         COMMAND_free(cmds[j]);
                     }
                     free(cmds);
-                    unlink(INPUT_PIPE);
-                    unlink(OUTPUT_PIPE);
                     shell_exit(cmd->argc > 1 ? atoi_32(cmd->argv[1]) : 0);
                 }
-                // restore_redirection(stdin_fd, stdout_fd);
             }
 
             int status;
             waitpid(-1, &status, 0);
-            
+
             if (prev_pipe_fd != -1) {
                 close(prev_pipe_fd);
             }
