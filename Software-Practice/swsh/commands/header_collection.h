@@ -15,7 +15,7 @@
 #include <unistd.h>
 #include <wait.h>
 
-#include "mystring.h"
+#include "../mystring.h"
 #include "error_handler.h"
 
 #endif

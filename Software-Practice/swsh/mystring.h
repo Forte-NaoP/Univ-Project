@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdarg.h>
 #include <immintrin.h>
 
 extern char *new_string(size_t size);
@@ -38,5 +39,7 @@ extern char *strtok_r(char *str, const char *delim, char **saveptr);
 /* Character array manipulation */
 extern void *memcpy(void *dest, const void *str, size_t n);
 extern void *memset(void *dest, int ch, size_t count);
+
+extern char *concat_string(const char *str1, ...);
 
 #endif

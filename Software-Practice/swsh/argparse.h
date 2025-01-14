@@ -7,6 +7,16 @@
 
 #include "mystring.h"
 
+#define TYPE1 0
+#define TYPE2 1
+#define TYPE3 2
+#define TYPE4 3
+
+#define TYPE1_CNT 6
+#define TYPE2_CNT 4
+#define TYPE3_CNT 3
+#define TYPE4_CNT 2
+
 typedef struct COMMAND {
     char *cmd;      // dynamically allocated
     char **argv;    // dynamically allocated
@@ -14,8 +24,7 @@ typedef struct COMMAND {
     char *input;    // dynamically allocated
     char *output;   // dynamically allocated
     bool append;
-    int *rd_pipe;   // pointer variable
-    int *wr_pipe;   // pointer variable
+    bool need_fork;
 } COMMAND;
 
 COMMAND *COMMAND_init();

@@ -335,3 +335,24 @@ void *memset(void *dest, int ch, size_t count) {
 
     return dest;
 }
+
+char *concat_string(const char *str1, ...) {
+    va_list args;
+    size_t total_len = strlen(str1);
+    char *str;
+    va_start(args, str1);
+    while ((str = va_arg(args, char *)) != NULL) {
+        total_len += strlen(str);
+    }
+    va_end(args);
+
+    char *result = new_string(total_len + 1);
+    strcpy(result, str1);
+
+    va_start(args, str1);
+    while ((str = va_arg(args, char *)) != NULL) {
+        strcat(result, str);
+    }
+    va_end(args);
+    return result;
+}

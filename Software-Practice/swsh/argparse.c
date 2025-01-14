@@ -1,15 +1,5 @@
 #include "argparse.h"
 
-#define TYPE1 0
-#define TYPE2 1
-#define TYPE3 2
-#define TYPE4 3
-
-#define TYPE1_CNT 6
-#define TYPE2_CNT 4
-#define TYPE3_CNT 3
-#define TYPE4_CNT 2
-
 char cmd_list[][8] = {
     "ls", "man", "grep", "sort", "awk", "bc",
     "head", "tail", "cat", "cp",
@@ -17,13 +7,11 @@ char cmd_list[][8] = {
     "pwd", "exit",
 };
 
+char inline_cmd[][8] = {"cd", "pwd", "exit"};
+const int INLINE_CNT = 3;
+
 int cmd_cnt[] = {TYPE1_CNT, TYPE2_CNT, TYPE3_CNT, TYPE4_CNT};
 char path[] = "./";
-
-char *cmd_type1[TYPE1_CNT] = {"ls", "man", "grep", "sort", "awk", "bc"};
-char *cmd_type2[TYPE2_CNT] = {"head", "tail", "cat", "cp"};
-char *cmd_type3[TYPE3_CNT] = {"mv", "rm", "cd"};
-char *cmd_type4[TYPE4_CNT] = {"pwd", "exit"};
 
 COMMAND *COMMAND_init() {
     COMMAND *cmd = (COMMAND *)malloc(sizeof(COMMAND));
@@ -33,8 +21,7 @@ COMMAND *COMMAND_init() {
     cmd->input = NULL;
     cmd->output = NULL;
     cmd->append = false;
-    cmd->rd_pipe = NULL;
-    cmd->wr_pipe = NULL;
+    cmd->need_fork = true;
     return cmd;
 }
 
@@ -185,17 +172,25 @@ bool parse_command(char *str, COMMAND *cmd) {
     }
 
     cmd->cmd = strdup(cmd_name);
-    char *cur = saveptr;
+    for (int i = 0; i < INLINE_CNT; ++i) {
+        if (strcmp(cmd->cmd, inline_cmd[i]) == 0) {
+            cmd->need_fork = false;
+            break;
+        }
+    }
 
-    if (*saveptr != '\0') cmd->argc = 1;
+    char *cur = saveptr;
+    if (*saveptr != '\0') cmd->argc = 2;
     while (*cur != '\0') {
         if (*cur == ' ') cmd->argc += 1;
         cur += 1;
     }
 
     if (cmd->argc > 0) {
-        cmd->argv = (char **)malloc(sizeof(char *) * (cmd->argc));
+        cmd->argv = (char **)calloc(cmd->argc + 1, sizeof(char *));
         int idx = 0;
+        cmd->argv[idx] = strdup(cmd->cmd);
+        idx += 1;
         while (*saveptr != '\0') {
             char *arg = strtok_r(NULL, " ", &saveptr);
             cmd->argv[idx] = strdup(arg);
@@ -214,7 +209,5 @@ void print_command(COMMAND *cmd) {
     if (cmd->input != NULL) printf("input: %s\n", cmd->input);
     if (cmd->output != NULL) printf("output: %s\n", cmd->output);
     printf("append: %d\n", cmd->append);
-    if (cmd->wr_pipe != NULL) printf("wr_pipe: %d\n", *cmd->wr_pipe);
-    if (cmd->rd_pipe != NULL) printf("rd_pipe: %d\n", *cmd->rd_pipe);
     printf("------------------------\n");
 }
