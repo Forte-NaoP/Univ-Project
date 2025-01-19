@@ -109,6 +109,19 @@ public:
         }
     }
 
+    void after_run() {
+        while (!promote_q.empty()) {
+            Process &p = promote_q.front();
+            promote(p);
+            promote_q.pop_front();
+        }
+        while (!preempt_q.empty()) {
+            Process &p = preempt_q.front();
+            preempt(p);
+            preempt_q.pop_front();
+        }
+    }
+    
     void run() {
         bool is_cpu_remain = !active_q.is_empty();
         bool is_io_remain = !io_q.empty();
@@ -120,29 +133,29 @@ public:
                 cur.cpu_burst.pop_front();
                 cur.used_time = 0;
                 if (cur.cpu_burst.empty()) { // all CPU burst finished
-                    cur.finished_time = cpu_clock;
-                    finishedq.push_back(cur);
-                } else {
-                    io_q.push_back(cur);
+                //     cur.finished_time = cpu_clock;
+                //     finishedq.push_back(cur);
+                // } else {
+                //     io_q.push_back(cur);
                 }
                 active_q.pop();
             } else if (time_quantum > 0 && time_quantum <= cur.used_time) { // time quantum expired
-                cur.used_time = 0;
-                io_q.push_back(cur);
+                // cur.used_time = 0;
+                // io_q.push_back(cur);
             }
         }
         if (is_io_remain) {
             for (auto it = io_q.begin(); it != io_q.end();) {
                 Process &cur = *it;
                 cur.io_burst.front() -= 1;
-                if (cur.io_burst.front() == 0) { // current I/O burst finished
-                    cur.io_burst.pop_front();
-                    cur.used_time = 0;
-                    active_q.push(cur);
-                    it = io_q.erase(it);
-                } else {
-                    ++it;
-                }
+                // if (cur.io_burst.front() == 0) { // current I/O burst finished
+                //     cur.io_burst.pop_front();
+                //     cur.used_time = 0;
+                //     active_q.push(cur);
+                //     it = io_q.erase(it);
+                // } else {
+                //     ++it;
+                // }
             }
         }
     }
@@ -150,12 +163,14 @@ public:
 private:
     Container active_q; 
     deque<Process> io_q;
+    deque<Process> promote_q;
+    deque<Process> preempt_q;
     int32_t time_quantum;
 };
 
-Scheduler<deque<Process>> q_0;
-Scheduler<deque<Process>> q_1;
-Scheduler<priority_queue<Process>> q_2;
+Scheduler<deque<Process>> q_0(2);
+Scheduler<deque<Process>> q_1(6);
+Scheduler<priority_queue<Process>> q_2(0);
 Scheduler<deque<Process>> q_3;
 
 void parse_process(const string &name) {
@@ -183,6 +198,9 @@ void parse_process(const string &name) {
         }
         waitq[i] = process;
     }
+    sort(waitq.begin(), waitq.end(), [](const Process &lhs, const Process &rhs) {
+        return lhs.arrivalTime > rhs.arrivalTime;
+    });
 
     ifs.close();
 }
@@ -209,11 +227,14 @@ void run() {
         if (q_0.empty() && q_1.empty() && q_2.empty() && q_3.empty() && waitq.empty()) {
             break;
         }
-        if (waitq.back().arrivalTime == cpu_clock) {
+        while (!waitq.empty() && waitq.back().arrivalTime <= cpu_clock) {
             Process p = waitq.back();
             waitq.pop_back();
             add_process(p);
         }
+        q_0.run(); q_1.run(); q_2.run(); q_3.run();
+        q_0.after_run(); q_1.after_run(); q_2.after_run(); q_3.after_run();
+        cpu_clock += 1;
     }
 }
 
