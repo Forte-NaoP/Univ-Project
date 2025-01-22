@@ -52,15 +52,15 @@ public:
     virtual Process &front() = 0;
     virtual bool empty() const = 0;
 
-    void set_next(SchedulerBase *next) { this->next = next; }
-    void set_prev(SchedulerBase *prev) { this->prev = prev; }
+//     void set_next(SchedulerBase *next) { this->next = next; }
+//     void set_prev(SchedulerBase *prev) { this->prev = prev; }
 
-    SchedulerBase *get_next() const { return next; }
-    SchedulerBase *get_prev() const { return prev; }
+//     SchedulerBase *get_next() const { return next; }
+//     SchedulerBase *get_prev() const { return prev; }
 
-protected:
-    SchedulerBase *prev = nullptr;
-    SchedulerBase *next = nullptr;
+// protected:
+//     SchedulerBase *prev = nullptr;
+//     SchedulerBase *next = nullptr;
 };
 
 void push(std::deque<Process>& q, const Process& process) {
@@ -123,34 +123,34 @@ public:
         return ::empty(active_q);
     }
 
-    void demote(Process &process) {
-        if (next != nullptr) {
-            next->push(process);
-        } else {
-            push(process);
-        }
-    }
+    // void demote(Process &process) {
+    //     if (next != nullptr) {
+    //         next->push(process);
+    //     } else {
+    //         push(process);
+    //     }
+    // }
 
-    void promote(Process &process) {
-        if (prev != nullptr) {
-            prev->push(process);
-        } else {
-            push(process);
-        }
-    }
+    // void promote(Process &process) {
+    //     if (prev != nullptr) {
+    //         prev->push(process);
+    //     } else {
+    //         push(process);
+    //     }
+    // }
 
-    void after_run() {
-        while (!promote_q.empty()) {
-            Process &p = promote_q.front();
-            promote(p);
-            promote_q.pop_front();
-        }
-        while (!demote_q.empty()) {
-            Process &p = demote_q.front();
-            demote(p);
-            demote_q.pop_front();
-        }
-    }
+    // void after_run() {
+    //     while (!promote_q.empty()) {
+    //         Process &p = promote_q.front();
+    //         promote(p);
+    //         promote_q.pop_front();
+    //     }
+    //     while (!demote_q.empty()) {
+    //         Process &p = demote_q.front();
+    //         demote(p);
+    //         demote_q.pop_front();
+    //     }
+    // }
     
     void run() {
         if (empty()) return;  // 큐가 비어있으면 실행 종료
@@ -210,9 +210,9 @@ public:
 
 private:
     Container active_q; 
-    deque<Process> io_q;
-    deque<Process> promote_q;
-    deque<Process> demote_q;
+    // deque<Process> io_q;
+    // deque<Process> promote_q;
+    // deque<Process> demote_q;
     int32_t time_quantum;
 };
 
@@ -332,10 +332,10 @@ void run() {
         else if (!q_3.empty()) q_3.run();
         else {}
 
-        q_0.after_run(); 
-        q_1.after_run();
-        q_2.after_run(); 
-        q_3.after_run();
+        // q_0.after_run(); 
+        // q_1.after_run();
+        // q_2.after_run(); 
+        // q_3.after_run();
 
         process_io_queue();
         print_queue_status();
